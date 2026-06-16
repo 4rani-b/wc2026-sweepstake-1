@@ -5,6 +5,12 @@ on:
     - cron: "0 8 * * *"   # 08:00 UTC = 09:00 BST every day
   workflow_dispatch:        # also allows manual run from GitHub Actions tab
 
+# Prevent two runs racing to push docs/index.html at the same time.
+# A new trigger cancels any run already in progress.
+concurrency:
+  group: update-leaderboard
+  cancel-in-progress: true
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -38,5 +44,6 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "Leaderboard update $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git pull --rebase origin main
             git push
           fi
