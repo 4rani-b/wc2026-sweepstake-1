@@ -97,13 +97,15 @@ def _team_cell(team: str, breakdown: dict) -> str:
     if breakdown["win_final"]:
         parts.append(f"Won Final: +5")
 
+    # Giant Killer always shown — 0 if none earned yet
+    gk = breakdown["giant_killer"]
+    parts.append(f"Giant Killer: +{gk}" if gk else "Giant Killer: 0")
+
     bonus_parts = []
-    if breakdown["giant_killer"]:
-        bonus_parts.append(f"Giant Killer: +{breakdown['giant_killer']}")
     if breakdown["cinderella"]:
         bonus_parts.append("Cinderella: +5")
     if breakdown["wooden_spoon"]:
-        bonus_parts.append("Wooden Spoon: +5")
+        bonus_parts.append("🥄 Wooden Spoon: +5")
 
     regular_html = "<br>".join(parts) if parts else ""
     bonus_html = ""

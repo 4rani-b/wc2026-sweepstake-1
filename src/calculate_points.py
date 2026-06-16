@@ -169,16 +169,34 @@ def calculate_all(
         if ranked:
             cinderella_team = max(ranked, key=lambda t: fifa_rankings[t])
 
-    # ---- Wooden Spoon: worst group performer among all 4th-place finishers ----
+    # ---- Wooden Spoon: team currently performing worst by sweepstake points ----
+    # Calculated AFTER base points are known (no circular dependency — ws excluded from base)
+    # Only teams that have played at least 1 match are eligible.
+    # Tiebreak: worst FIFA ranking (highest rank number).
+    all_sweepstake_teams = [t for teams in participants.values() for t in teams]
+    active_teams = [t for t in all_sweepstake_teams if team_stats.get(t, {}).get("mp", 0) > 0]
+
+    def _base_pts(team: str) -> int:
+        stats = team_stats.get(team)
+        pos = stats["position"] if stats else 4
+        gp = GROUP_STAGE_PTS[pos]
+        r32 = 1 if team in confirmed_r32 else 0
+        wins = knockout_wins.get(team, [])
+        ko = len([w for w in wins if w[1] != "final"]) * 3
+        fin = 5 if any(w[1] == "final" for w in wins) else 0
+        gk = giant_killer_pts.get(team, 0)
+        cin = 5 if team == cinderella_team else 0
+        return gp + r32 + ko + fin + gk + cin
+
     wooden_spoon_team = None
-    worst_record = None
-    for team, stats in team_stats.items():
-        if not stats["complete"] or stats["position"] != 4:
-            continue
-        record = (stats["pts"], stats["gd"], stats["gf"])
-        if worst_record is None or record < worst_record:
-            worst_record = record
-            wooden_spoon_team = team
+    if active_teams:
+        min_pts = min(_base_pts(t) for t in active_teams)
+        candidates = [t for t in active_teams if _base_pts(t) == min_pts]
+        # Tiebreak: worst GD (most negative), then most goals conceded
+        def _worst_key(team):
+            stats = team_stats.get(team, {})
+            return (stats.get("gd", 0), -stats.get("ga", 0))
+        wooden_spoon_team = min(candidates, key=_worst_key)
 
     # ---- Tournament winner ----
     tournament_winner = None
