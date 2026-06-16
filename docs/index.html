@@ -115,7 +115,11 @@ footer {
 <header>
   <h1>⚽ WC2026 Sweepstake</h1>
   <p class="subtitle">
+<<<<<<< HEAD
     <span>Last updated: 2026-06-16 22:14 UTC</span>
+=======
+    <span>Last updated: 2026-06-16 22:09 UTC</span>
+>>>>>>> a83661291c80b2f12d84452d79ee26d49425e68a
     <span>·</span>
     <span>Recalculated daily at 08:00 UTC</span>
     <button class="refresh-btn" id="refresh-btn" onclick="triggerRefresh()">↻ Refresh</button>
@@ -132,7 +136,7 @@ footer {
   <p>R16 wins also count for 3pts · Points recalculated fresh each day (not cumulative)</p>
 </footer>
 <script>
-var REFRESH_TOKEN = "";
+var REFRESH_TOKEN = "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";
 var API_URL = "https://api.github.com/repos/4rani-b/wc2026-sweepstake-1/actions/workflows/update-leaderboard.yml/dispatches";
 function triggerRefresh() {
   var btn = document.getElementById("refresh-btn");
