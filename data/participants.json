@@ -1,0 +1,14 @@
+{
+  "BEHROD":  ["Morocco", "Colombia", "Austria", "Curacao"],
+  "JONNY":   ["Argentina", "Sweden", "South Africa", "Haiti"],
+  "ALEX":    ["Brazil", "South Korea", "Bosnia & Herzegovina", "New Zealand"],
+  "FITTY":   ["England", "Türkiye", "Paraguay", "Tunisia"],
+  "NICOLA":  ["Belgium", "Croatia", "Iran", "Jordan"],
+  "HANNAH":  ["Spain", "Egypt", "Czechia", "DR Congo"],
+  "MIKE":    ["Netherlands", "Japan", "Ghana", "Qatar"],
+  "JAMES":   ["Germany", "Uruguay", "Canada", "Uzbekistan"],
+  "MATT":    ["France", "Ivory Coast", "Saudi Arabia", "Australia"],
+  "OLLY":    ["Portugal", "Norway", "Algeria", "Panama"],
+  "TONY":    ["Senegal", "USA", "Scotland", "Iraq"],
+  "JEROME":  ["Mexico", "Switzerland", "Ecuador", "Cape Verde"]
+}

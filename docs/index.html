@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WC2026 Sweepstake Leaderboard</title>
+<style>
+:root {
+    --bg: #0d1117; --surface: #161b22; --surface2: #21262d;
+    --border: #30363d; --text: #e6edf3; --muted: #8b949e;
+    --gold: #d4a017; --green: #3fb950; --orange: #f0883e; --red: #f85149;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    max-width: 1100px; margin: 0 auto; padding: 20px 12px;
+}
+header { text-align: center; padding: 28px 0 18px; }
+header h1 { font-size: 2em; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; }
+header .subtitle { color: var(--muted); margin-top: 6px; font-size: 0.88em; }
+.awards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px; margin: 18px 0;
+}
+.award-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px 16px;
+}
+.award-card h3 { font-size: 0.78em; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); margin-bottom: 7px; }
+.award-card .holder { font-weight: 700; font-size: 1.05em; }
+.award-card .team-name { color: var(--muted); font-size: 0.88em; margin-top: 3px; }
+.award-card .pending { color: var(--muted); font-style: italic; font-size: 0.9em; }
+table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+thead tr { background: var(--surface); border-bottom: 2px solid var(--gold); }
+th { padding: 10px 8px; text-align: left; color: var(--gold); font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; }
+th.right, td.right { text-align: right; }
+th.center, td.center { text-align: center; }
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:hover { background: var(--surface); }
+td { padding: 12px 8px; vertical-align: top; }
+.td-rank { font-size: 1.2em; width: 44px; text-align: center; }
+.td-name { font-weight: 700; font-size: 1.05em; white-space: nowrap; }
+.td-total { font-size: 1.7em; font-weight: 900; color: var(--green); text-align: center; min-width: 55px; }
+.team-cell { font-size: 0.82em; min-width: 120px; }
+.team-cell .tname { font-weight: 600; }
+.team-cell .tpts { color: var(--green); font-weight: 700; font-size: 1em; }
+.team-cell .tbreakdown { color: var(--muted); margin-top: 2px; line-height: 1.5; }
+.team-cell .tbreakdown .bonus { color: var(--orange); }
+.no-data { color: var(--muted); font-style: italic; font-size: 0.8em; }
+footer {
+    color: var(--muted); font-size: 0.78em; text-align: center;
+    margin-top: 30px; border-top: 1px solid var(--border); padding-top: 14px; line-height: 1.8;
+}
+@media (max-width: 640px) {
+    .team-col-3, .team-col-4 { display: none; }
+    .td-total { font-size: 1.3em; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>⚽ WC2026 Sweepstake</h1>
+  <p class="subtitle">Last updated: 2026-06-16 13:25 UTC &nbsp;·&nbsp; Recalculated daily at 08:00 UTC</p>
+</header>
+<div class="awards"><div class="award-card"><h3>⭐ Cinderella Award (+5pts)</h3><div class="pending">Lowest FIFA-ranked team to reach Round of 32 — TBD</div></div><div class="award-card"><h3>🪵 Wooden Spoon (+5pts)</h3><div class="pending">Worst group-stage team — TBD (group stage not yet complete)</div></div><div class="award-card"><h3>🏆 World Cup Winner</h3><div class="pending">Champion — TBD</div></div></div>
+<table>
+  <thead><tr><th class="center">#</th><th>Name</th><th class="center">Pts</th><th class="team-col-1">Team 1</th><th class="team-col-2">Team 2</th><th class="team-col-3">Team 3</th><th class="team-col-4">Team 4</th></tr></thead>
+  <tbody><tr><td class="td-rank">🥇</td><td class="td-name">ALEX</td><td class="td-total">8</td><td class="team-col-1"><div class="team-cell"><span class="tname">🇧🇷 Brazil</span><br><span class="tpts">2 pts</span><br><span class="tbreakdown">Grp 2nd: 2</span></div></td><td class="team-col-2"><div class="team-cell"><span class="tname">🇰🇷 South Korea</span><br><span class="tpts">2 pts</span><br><span class="tbreakdown">Grp 2nd: 2</span></div></td><td class="team-col-3"><div class="team-cell"><span class="tname">🇧🇦 Bosnia & Herzegovina</span><br><span class="tpts">2 pts</span><br><span class="tbreakdown">Grp 2nd: 2</span></div></td><td class="team-col-4"><div class="team-cell"><span class="tname">🇳🇿 New Zealand</span><br><span class="tpts">2 pts</span><br><span class="tbreakdown">Grp 2nd: 2</span></div></td></tr><tr><td class="td-rank">🥈</td><td class="td-name">JAMES</td><td class="td-total">8</td><td class="team-col-1"><div class="team-cell"><span class="tname">🇩🇪 Germany</span><br><span class="tpts">3 pts</span><br><span class="tbreakdown">Grp 1st: 3</span></div></td><td class="team-col-2"><div class="team-cell"><span class="tname">🇺🇾 Uruguay</span><br><span class="tpts">2 pts</span><br><span class="tbreakdown">Grp 2nd: 2</span></div></td><td class="team-col-3"><div class="team-cell"><span class="tname">🇨🇦 Canada</span><br><span class="tpts">3 pts</span><br><span class="tbreakdown">Grp 1st: 3</span></div></td><td class="team-col-4"><div class="team-cell"><span class="tname">🇺🇿 Uzbekistan</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td></tr><tr><td class="td-rank">🥉</td><td class="td-name">MATT</td><td class="td-total">7</td><td class="team-col-1"><div class="team-cell"><span class="tname">🇫🇷 France</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td><td class="team-col-2"><div class="team-cell"><span class="tname">🇨🇮 Ivory Coast</span><br><span class="tpts">2 pts</span><br><span class="tbreakdown">Grp 2nd: 2</span></div></td><td class="team-col-3"><div class="team-cell"><span class="tname">🇸🇦 Saudi Arabia</span><br><span class="tpts">3 pts</span><br><span class="tbreakdown">Grp 1st: 3</span></div></td><td class="team-col-4"><div class="team-cell"><span class="tname">🇦🇺 Australia</span><br><span class="tpts">2 pts</span><br><span class="tbreakdown">Grp 2nd: 2</span></div></td></tr><tr><td class="td-rank">4</td><td class="td-name">TONY</td><td class="td-total">6</td><td class="team-col-1"><div class="team-cell"><span class="tname">🇸🇳 Senegal</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td><td class="team-col-2"><div class="team-cell"><span class="tname">🇺🇸 USA</span><br><span class="tpts">3 pts</span><br><span class="tbreakdown">Grp 1st: 3</span></div></td><td class="team-col-3"><div class="team-cell"><span class="tname">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland</span><br><span class="tpts">3 pts</span><br><span class="tbreakdown">Grp 1st: 3</span></div></td><td class="team-col-4"><div class="team-cell"><span class="tname">🇮🇶 Iraq</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td></tr><tr><td class="td-rank">5</td><td class="td-name">NICOLA</td><td class="td-total">4</td><td class="team-col-1"><div class="team-cell"><span class="tname">🇧🇪 Belgium</span><br><span class="tpts">1 pts</span><br><span class="tbreakdown">Grp 3rd: 1</span></div></td><td class="team-col-2"><div class="team-cell"><span class="tname">🇭🇷 Croatia</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td><td class="team-col-3"><div class="team-cell"><span class="tname">🇮🇷 Iran</span><br><span class="tpts">3 pts</span><br><span class="tbreakdown">Grp 1st: 3</span></div></td><td class="team-col-4"><div class="team-cell"><span class="tname">🇯🇴 Jordan</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td></tr><tr><td class="td-rank">6</td><td class="td-name">MIKE</td><td class="td-total">4</td><td class="team-col-1"><div class="team-cell"><span class="tname">🇳🇱 Netherlands</span><br><span class="tpts">2 pts</span><br><span class="tbreakdown">Grp 2nd: 2</span></div></td><td class="team-col-2"><div class="team-cell"><span class="tname">🇯🇵 Japan</span><br><span class="tpts">1 pts</span><br><span class="tbreakdown">Grp 3rd: 1</span></div></td><td class="team-col-3"><div class="team-cell"><span class="tname">🇬🇭 Ghana</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td><td class="team-col-4"><div class="team-cell"><span class="tname">🇶🇦 Qatar</span><br><span class="tpts">1 pts</span><br><span class="tbreakdown">Grp 3rd: 1</span></div></td></tr><tr><td class="td-rank">7</td><td class="td-name">JEROME</td><td class="td-total">4</td><td class="team-col-1"><div class="team-cell"><span class="tname">🇲🇽 Mexico</span><br><span class="tpts">3 pts</span><br><span class="tbreakdown">Grp 1st: 3</span></div></td><td class="team-col-2"><div class="team-cell"><span class="tname">🇨🇭 Switzerland</span><br><span class="tpts">0 pts</span><br><span class="tbreakdown">Group stage</span></div></td><td class="team-col-3"><div class="team-cell"><span class="tname">🇪🇨 Ecuador</span><br><span class="tpts">1 pts</span><br><span class="tbreakdown">Grp 3rd: 1</span></div></td><td class="team-col-4"><div class="team-cell"><span class="tname">🇨🇻 Cape Verde</span><br><span class="tpts">0 pts</span><br><span class="tbreakdown">Group stage</span></div></td></tr><tr><td class="td-rank">8</td><td class="td-name">JONNY</td><td class="td-total">3</td><td class="team-col-1"><div class="team-cell"><span class="tname">🇦🇷 Argentina</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td><td class="team-col-2"><div class="team-cell"><span class="tname">🇸🇪 Sweden</span><br><span class="tpts">3 pts</span><br><span class="tbreakdown">Grp 1st: 3</span></div></td><td class="team-col-3"><div class="team-cell"><span class="tname">🇿🇦 South Africa</span><br><span class="tpts">0 pts</span><br><span class="tbreakdown">Group stage</span></div></td><td class="team-col-4"><div class="team-cell"><span class="tname">🇭🇹 Haiti</span><br><span class="tpts">0 pts</span><br><span class="tbreakdown">Group stage</span></div></td></tr><tr><td class="td-rank">9</td><td class="td-name">HANNAH</td><td class="td-total">2</td><td class="team-col-1"><div class="team-cell"><span class="tname">🇪🇸 Spain</span><br><span class="tpts">1 pts</span><br><span class="tbreakdown">Grp 3rd: 1</span></div></td><td class="team-col-2"><div class="team-cell"><span class="tname">🇪🇬 Egypt</span><br><span class="tpts">0 pts</span><br><span class="tbreakdown">Group stage</span></div></td><td class="team-col-3"><div class="team-cell"><span class="tname">🇨🇿 Czechia</span><br><span class="tpts">1 pts</span><br><span class="tbreakdown">Grp 3rd: 1</span></div></td><td class="team-col-4"><div class="team-cell"><span class="tname">🇨🇩 DR Congo</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td></tr><tr><td class="td-rank">10</td><td class="td-name">BEHROD</td><td class="td-total">1</td><td class="team-col-1"><div class="team-cell"><span class="tname">🇲🇦 Morocco</span><br><span class="tpts">1 pts</span><br><span class="tbreakdown">Grp 3rd: 1</span></div></td><td class="team-col-2"><div class="team-cell"><span class="tname">🇨🇴 Colombia</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td><td class="team-col-3"><div class="team-cell"><span class="tname">🇦🇹 Austria</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td><td class="team-col-4"><div class="team-cell"><span class="tname">🇨🇼 Curacao</span><br><span class="tpts">0 pts</span><br><span class="tbreakdown">Group stage</span></div></td></tr><tr><td class="td-rank">11</td><td class="td-name">FITTY</td><td class="td-total">1</td><td class="team-col-1"><div class="team-cell"><span class="tname">🏴󠁧󠁢󠁥󠁮󠁧󠁿 England</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td><td class="team-col-2"><div class="team-cell"><span class="tname">🇹🇷 Türkiye</span><br><span class="tpts">1 pts</span><br><span class="tbreakdown">Grp 3rd: 1</span></div></td><td class="team-col-3"><div class="team-cell"><span class="tname">🇵🇾 Paraguay</span><br><span class="tpts">0 pts</span><br><span class="tbreakdown">Group stage</span></div></td><td class="team-col-4"><div class="team-cell"><span class="tname">🇹🇳 Tunisia</span><br><span class="tpts">0 pts</span><br><span class="tbreakdown">Group stage</span></div></td></tr><tr><td class="td-rank">12</td><td class="td-name">OLLY</td><td class="td-total">0</td><td class="team-col-1"><div class="team-cell"><span class="tname">🇵🇹 Portugal</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td><td class="team-col-2"><div class="team-cell"><span class="tname">🇳🇴 Norway</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td><td class="team-col-3"><div class="team-cell"><span class="tname">🇩🇿 Algeria</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td><td class="team-col-4"><div class="team-cell"><span class="tname">🇵🇦 Panama</span><br><span class="tpts">0 pts</span><br><span class="no-data">No matches yet</span></div></td></tr></tbody>
+</table>
+<footer>
+  <p><strong>Scoring:</strong> Win Group 3pts · 2nd 2pts · 3rd 1pt · Qualify R32 +1pt · Knockout Win 3pts · Win Final 5pts</p>
+  <p>Giant Killer +2pts (beat team 15+ FIFA places above you) · Cinderella Award +5pts · Wooden Spoon +5pts</p>
+  <p>R16 wins also count for 3pts · Points recalculated fresh each day (not cumulative)</p>
+</footer>
+</body>
+</html>
