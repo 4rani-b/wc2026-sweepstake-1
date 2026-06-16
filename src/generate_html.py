@@ -189,7 +189,12 @@ def _award_card(title: str, holder: str, team: str, description: str = "") -> st
     return f'<div class="award-card"><h3>{title}</h3>{body}</div>'
 
 
-def generate(scores: dict, meta: dict, participants: dict, last_updated: str) -> str:
+GITHUB_OWNER = "4rani-b"
+GITHUB_REPO = "wc2026-sweepstake-1"
+GITHUB_WORKFLOW = "update-leaderboard.yml"
+
+
+def generate(scores: dict, meta: dict, participants: dict, last_updated: str, refresh_token: str = "") -> str:
     # Sort participants by total points desc
     ranked = sorted(scores.items(), key=lambda x: -x[1]["total"])
 
@@ -255,7 +260,7 @@ def generate(scores: dict, meta: dict, participants: dict, last_updated: str) ->
     <span>Last updated: {last_updated}</span>
     <span>·</span>
     <span>Recalculated daily at 08:00 UTC</span>
-    <button class="refresh-btn" onclick="location.reload()">↻ Refresh</button>
+    <button class="refresh-btn" id="refresh-btn" onclick="triggerRefresh()">↻ Refresh</button>
   </p>
 </header>
 {awards_html}
@@ -268,5 +273,43 @@ def generate(scores: dict, meta: dict, participants: dict, last_updated: str) ->
   <p>Giant Killer +2pts (beat team 15+ FIFA places above you) · Cinderella Award +5pts · Wooden Spoon +5pts</p>
   <p>R16 wins also count for 3pts · Points recalculated fresh each day (not cumulative)</p>
 </footer>
+<script>
+var REFRESH_TOKEN = "{refresh_token}";
+var API_URL = "https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/actions/workflows/{GITHUB_WORKFLOW}/dispatches";
+function triggerRefresh() {{
+  var btn = document.getElementById("refresh-btn");
+  if (!REFRESH_TOKEN) {{
+    location.reload();
+    return;
+  }}
+  btn.disabled = true;
+  btn.textContent = "Triggering...";
+  fetch(API_URL, {{
+    method: "POST",
+    headers: {{
+      "Authorization": "Bearer " + REFRESH_TOKEN,
+      "Accept": "application/vnd.github.v3+json",
+      "Content-Type": "application/json"
+    }},
+    body: JSON.stringify({{ref: "main"}})
+  }}).then(function(r) {{
+    if (r.status === 204) {{
+      var secs = 55;
+      btn.textContent = "Updating… " + secs + "s";
+      var iv = setInterval(function() {{
+        secs--;
+        btn.textContent = "Updating… " + secs + "s";
+        if (secs <= 0) {{ clearInterval(iv); location.reload(); }}
+      }}, 1000);
+    }} else {{
+      btn.textContent = "Error " + r.status;
+      setTimeout(function() {{ btn.textContent = "↻ Refresh"; btn.disabled = false; }}, 3000);
+    }}
+  }}).catch(function() {{
+    btn.textContent = "↻ Refresh";
+    btn.disabled = false;
+  }});
+}}
+</script>
 </body>
 </html>"""
