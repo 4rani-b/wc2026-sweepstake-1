@@ -31,11 +31,20 @@ CSS = """
 body {
     background: var(--bg); color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    max-width: 1100px; margin: 0 auto; padding: 20px 12px;
+    max-width: 1200px; margin: 0 auto; padding: 20px 12px;
 }
 header { text-align: center; padding: 28px 0 18px; }
 header h1 { font-size: 2em; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; }
-header .subtitle { color: var(--muted); margin-top: 6px; font-size: 0.88em; }
+.subtitle {
+    color: var(--muted); margin-top: 8px; font-size: 0.88em;
+    display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+}
+.refresh-btn {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); padding: 5px 14px; border-radius: 6px;
+    cursor: pointer; font-size: 0.85em; transition: background 0.15s;
+}
+.refresh-btn:hover { background: var(--border); }
 .awards {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 12px; margin: 18px 0;
@@ -48,30 +57,74 @@ header .subtitle { color: var(--muted); margin-top: 6px; font-size: 0.88em; }
 .award-card .holder { font-weight: 700; font-size: 1.05em; }
 .award-card .team-name { color: var(--muted); font-size: 0.88em; margin-top: 3px; }
 .award-card .pending { color: var(--muted); font-style: italic; font-size: 0.9em; }
+
+/* ----- Table ----- */
 table { width: 100%; border-collapse: collapse; margin-top: 16px; }
 thead tr { background: var(--surface); border-bottom: 2px solid var(--gold); }
 th { padding: 10px 8px; text-align: left; color: var(--gold); font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; }
-th.right, td.right { text-align: right; }
-th.center, td.center { text-align: center; }
+th.center { text-align: center; }
 tbody tr { border-bottom: 1px solid var(--border); }
 tbody tr:hover { background: var(--surface); }
-td { padding: 12px 8px; vertical-align: top; }
+td { padding: 10px 8px; vertical-align: top; }
 .td-rank { font-size: 1.2em; width: 44px; text-align: center; }
 .td-name { font-weight: 700; font-size: 1.05em; white-space: nowrap; }
 .td-total { font-size: 1.7em; font-weight: 900; color: var(--green); text-align: center; min-width: 55px; }
-.team-cell { font-size: 0.82em; min-width: 120px; }
+.td-teams { padding: 8px 6px; }
+
+/* All 4 teams in a responsive grid inside a single cell */
+.teams-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+
+/* ----- Team cell ----- */
+.team-cell { font-size: 0.82em; min-width: 0; }
 .team-cell .tname { font-weight: 600; }
 .team-cell .tpts { color: var(--green); font-weight: 700; font-size: 1em; }
-.team-cell .tbreakdown { color: var(--muted); margin-top: 2px; line-height: 1.5; }
+.team-cell .tbreakdown { color: var(--muted); margin-top: 2px; line-height: 1.5; display: block; }
 .team-cell .tbreakdown .bonus { color: var(--orange); }
 .no-data { color: var(--muted); font-style: italic; font-size: 0.8em; }
+
 footer {
     color: var(--muted); font-size: 0.78em; text-align: center;
     margin-top: 30px; border-top: 1px solid var(--border); padding-top: 14px; line-height: 1.8;
 }
-@media (max-width: 640px) {
-    .team-col-3, .team-col-4 { display: none; }
-    .td-total { font-size: 1.3em; }
+
+/* ----- Tablet: 2-column team grid ----- */
+@media (max-width: 960px) {
+    .teams-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ----- Mobile: card layout ----- */
+@media (max-width: 600px) {
+    table, tbody { display: block; }
+    thead { display: none; }
+
+    /* Each row becomes a card */
+    tbody tr {
+        display: grid;
+        grid-template-areas: "rank name pts" "teams teams teams";
+        grid-template-columns: 44px 1fr auto;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 10px;
+        overflow: hidden;
+    }
+    tbody tr:hover { background: var(--surface2); }
+
+    .td-rank  { grid-area: rank;  display: block; text-align: center; align-self: center; padding: 10px 6px; font-size: 1em; width: auto; }
+    .td-name  { grid-area: name;  display: block; align-self: center; padding: 10px 6px; font-size: 1em; }
+    .td-total { grid-area: pts;   display: block; align-self: center; padding: 10px 12px; font-size: 1.3em; text-align: right; min-width: auto; }
+    .td-teams { grid-area: teams; display: block; border-top: 1px solid var(--border); padding: 8px; }
+
+    .teams-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+
+    /* Card-style team cells on mobile */
+    .team-cell {
+        background: var(--bg); border: 1px solid var(--border);
+        border-radius: 6px; padding: 6px 8px;
+    }
+
+    header h1 { font-size: 1.5em; }
+    .subtitle { font-size: 0.82em; }
 }
 """
 
@@ -167,28 +220,23 @@ def generate(scores: dict, meta: dict, participants: dict, last_updated: str) ->
         '<th class="center">#</th>'
         '<th>Name</th>'
         '<th class="center">Pts</th>'
+        '<th>Teams</th>'
     )
-    # Team columns — label by position (Team 1–4) in header, actual name in cell
-    for i in range(1, 5):
-        cls = f"team-col-{i}"
-        header_cells += f'<th class="{cls}">Team {i}</th>'
 
     # --- Table rows ---
     rows_html = ""
     for rank, (person, data) in enumerate(ranked, 1):
         rank_display = RANK_ICONS.get(rank, str(rank))
         teams = participants[person]
-        team_cells = ""
-        for i, team in enumerate(teams, 1):
-            breakdown = data["teams"].get(team, {})
-            team_cells += f'<td class="team-col-{i}">{_team_cell(team, breakdown)}</td>'
-
+        team_divs = "".join(
+            _team_cell(team, data["teams"].get(team, {})) for team in teams
+        )
         rows_html += (
             f'<tr>'
             f'<td class="td-rank">{rank_display}</td>'
             f'<td class="td-name">{person}</td>'
             f'<td class="td-total">{data["total"]}</td>'
-            f'{team_cells}'
+            f'<td class="td-teams"><div class="teams-grid">{team_divs}</div></td>'
             f'</tr>'
         )
 
@@ -203,7 +251,12 @@ def generate(scores: dict, meta: dict, participants: dict, last_updated: str) ->
 <body>
 <header>
   <h1>⚽ WC2026 Sweepstake</h1>
-  <p class="subtitle">Last updated: {last_updated} &nbsp;·&nbsp; Recalculated daily at 08:00 UTC</p>
+  <p class="subtitle">
+    <span>Last updated: {last_updated}</span>
+    <span>·</span>
+    <span>Recalculated daily at 08:00 UTC</span>
+    <button class="refresh-btn" onclick="location.reload()">↻ Refresh</button>
+  </p>
 </header>
 {awards_html}
 <table>

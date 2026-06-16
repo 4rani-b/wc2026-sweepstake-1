@@ -1,0 +1,9 @@
+{
+  "_note": "Fair-play tiebreaker overrides for groups where pts/GD/GF are identical. Only affects teams that are genuinely tied on all three stats — if stats diverge the computed order wins automatically. Update from official FIFA group tables (inside.fifa.com or BBC Sport) when a tiebreaker is confirmed. Format: {group_letter: {team_name: correct_position}}.",
+  "_C": "Morocco had better fair play vs Brazil in their 1-1 draw (confirmed Wikipedia/CBS Sports)",
+  "C": {"Morocco": 2, "Brazil": 3},
+  "_F": "Japan had better fair play vs Netherlands in their 2-2 draw (confirmed Wikipedia/CBS Sports). No score impact: MIKE owns both.",
+  "F": {"Japan": 2, "Netherlands": 3},
+  "_G": "New Zealand had better fair play vs Iran in their 2-2 draw (confirmed Wikipedia/CBS Sports)",
+  "G": {"New Zealand": 1, "Iran": 2}
+}

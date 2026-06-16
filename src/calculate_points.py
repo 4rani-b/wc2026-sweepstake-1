@@ -23,12 +23,17 @@ def _normalize(name: str, aliases: dict) -> str:
 # Group standings
 # ---------------------------------------------------------------------------
 
-def build_group_standings(matches: list, aliases: dict) -> dict:
+def build_group_standings(matches: list, aliases: dict, overrides: dict = None) -> dict:
     """
     Calculate group standings from completed group-stage match results.
     Returns {group_letter: [sorted team dicts with position added]}.
     Each team dict: {team, mp, w, d, l, gf, ga, gd, pts, position, complete}
+
+    overrides: {group_letter: {team_name: position}} for fair-play tiebreakers
+    that cannot be computed from pts/GD/GF alone.  Only applies when teams are
+    genuinely tied on all three statistics; otherwise the computed order wins.
     """
+    overrides = overrides or {}
     groups: dict = {}  # letter -> {team_name -> stats}
 
     for match in matches:
@@ -64,18 +69,39 @@ def build_group_standings(matches: list, aliases: dict) -> dict:
             groups[group][home]["d"] += 1
             groups[group][away]["d"] += 1
 
+    GROUP_SIZE = 4  # all WC 2026 groups have 4 teams
+
     sorted_groups: dict = {}
     for letter, teams_dict in groups.items():
         teams = list(teams_dict.values())
         for t in teams:
             t["pts"] = t["w"] * 3 + t["d"]
             t["gd"] = t["gf"] - t["ga"]
-        teams.sort(key=lambda t: (-t["pts"], -t["gd"], -t["gf"]))
+
+        # Pad with placeholder entries for teams that haven't played yet.
+        # A 0-pt team with negative GD (e.g. Senegal) must not get an
+        # inflated position just because unplayed teams aren't in the dict yet.
+        # Placeholders (0pts/GD/GF) sort naturally above negative-GD teams.
+        placeholders = [
+            {"team": "", "mp": 0, "w": 0, "d": 0, "l": 0,
+             "gf": 0, "ga": 0, "pts": 0, "gd": 0, "_placeholder": True}
+            for _ in range(GROUP_SIZE - len(teams))
+        ]
+        all_entries = teams + placeholders
+        group_overrides = overrides.get(letter, {})
+        all_entries.sort(key=lambda t: (
+            -t["pts"],
+            -t["gd"],
+            -t["gf"],
+            # Fair-play tiebreaker from overrides.json; only decisive when
+            # pts/GD/GF are all equal (override has no effect otherwise).
+            group_overrides.get(t["team"], 9999),
+        ))
         complete = all(t["mp"] >= 3 for t in teams)
-        for i, t in enumerate(teams):
+        for i, t in enumerate(all_entries):
             t["position"] = i + 1
             t["complete"] = complete
-        sorted_groups[letter] = teams
+        sorted_groups[letter] = [t for t in all_entries if not t.get("_placeholder")]
 
     return sorted_groups
 

@@ -28,6 +28,8 @@ def main():
     participants = load_json(DATA / "participants.json")
     fifa_rankings = load_json(DATA / "fifa-rankings.json")
     aliases = load_json(DATA / "team-aliases.json")
+    standings_overrides_path = DATA / "standings-overrides.json"
+    standings_overrides = load_json(standings_overrides_path) if standings_overrides_path.exists() else {}
 
     # All teams in the sweepstake (flat list for validation)
     all_sweepstake_teams = {t for teams in participants.values() for t in teams}
@@ -44,7 +46,7 @@ def main():
 
     print("Calculating standings from match data...")
     from calculate_points import build_group_standings, calculate_all
-    group_standings = build_group_standings(matches, aliases)
+    group_standings = build_group_standings(matches, aliases, standings_overrides)
 
     total_groups = len(group_standings)
     total_matches = len([m for m in matches if m["completed"]])
