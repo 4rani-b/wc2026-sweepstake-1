@@ -44,6 +44,9 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "Leaderboard update $(date -u '+%Y-%m-%d %H:%M UTC')"
-            git pull --rebase origin main
-            git push
+            for attempt in 1 2 3; do
+              git pull --rebase origin main && git push && break
+              echo "Push attempt $attempt failed, retrying..."
+              [ $attempt -eq 3 ] && { echo "All push attempts failed"; exit 1; }
+            done
           fi
