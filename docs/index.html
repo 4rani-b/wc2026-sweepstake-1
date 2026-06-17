@@ -115,7 +115,7 @@ footer {
 <header>
   <h1>⚽ WC2026 Sweepstake</h1>
   <p class="subtitle">
-    <span>Last updated: 2026-06-17 22:11 UTC</span>
+    <span>Last updated: 2026-06-17 22:20 UTC</span>
     <span>·</span>
     <span>Recalculated daily at 08:00 UTC</span>
     <button class="refresh-btn" id="refresh-btn" onclick="triggerRefresh()">↻ Refresh</button>
@@ -132,7 +132,7 @@ footer {
   <p>R16 wins also count for 3pts · Points recalculated fresh each day (not cumulative)</p>
 </footer>
 <script>
-var WORKER_URL = "";
+var WORKER_URL = "https://wc2026-sweepstake-1.behrod.workers.dev/refresh";
 function triggerRefresh() {
   var btn = document.getElementById("refresh-btn");
   if (!WORKER_URL) {
