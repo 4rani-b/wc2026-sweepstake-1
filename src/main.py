@@ -30,6 +30,9 @@ def main():
     aliases = load_json(DATA / "team-aliases.json")
     standings_overrides_path = DATA / "standings-overrides.json"
     standings_overrides = load_json(standings_overrides_path) if standings_overrides_path.exists() else {}
+    config_path = DATA / "config.json"
+    config = load_json(config_path) if config_path.exists() else {}
+    worker_url = config.get("worker_url", "")
 
     # All teams in the sweepstake (flat list for validation)
     all_sweepstake_teams = {t for teams in participants.values() for t in teams}
@@ -71,7 +74,7 @@ def main():
     print("\nGenerating HTML...")
     from generate_html import generate
     now_utc = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
-    html = generate(scores, meta, participants, now_utc)
+    html = generate(scores, meta, participants, now_utc, worker_url=worker_url)
 
     DOCS.mkdir(exist_ok=True)
     out_path = DOCS / "index.html"
