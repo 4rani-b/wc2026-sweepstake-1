@@ -31,8 +31,6 @@ jobs:
 
       - name: Generate leaderboard
         working-directory: src
-        env:
-          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
         run: python main.py
 
       - name: Commit and push updated leaderboard

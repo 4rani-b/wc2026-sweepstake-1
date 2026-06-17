@@ -189,9 +189,7 @@ def _award_card(title: str, holder: str, team: str, description: str = "") -> st
     return f'<div class="award-card"><h3>{title}</h3>{body}</div>'
 
 
-GITHUB_OWNER = "4rani-b"
-GITHUB_REPO = "wc2026-sweepstake-1"
-GITHUB_WORKFLOW = "update-leaderboard.yml"
+GITHUB_DISPATCH_URL = "https://api.github.com/repos/4rani-b/wc2026-sweepstake-1/actions/workflows/update-leaderboard.yml/dispatches"
 
 
 def generate(scores: dict, meta: dict, participants: dict, last_updated: str, refresh_token: str = "") -> str:
@@ -274,12 +272,16 @@ def generate(scores: dict, meta: dict, participants: dict, last_updated: str, re
   <p>R16 wins also count for 3pts · Points recalculated fresh each day (not cumulative)</p>
 </footer>
 <script>
-var REFRESH_TOKEN = "{refresh_token}";
-var API_URL = "https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/actions/workflows/{GITHUB_WORKFLOW}/dispatches";
+/* Token stored in browser localStorage — never in HTML, never committed to git.
+   To enable workflow triggering, open the browser console on this page and run:
+     localStorage.setItem('wc_token', 'ghp_YOUR_TOKEN_HERE')
+   To clear it: localStorage.removeItem('wc_token') */
+var API_URL = "{GITHUB_DISPATCH_URL}";
 function triggerRefresh() {{
   var btn = document.getElementById("refresh-btn");
-  if (!REFRESH_TOKEN) {{
-    location.reload();
+  var token = localStorage.getItem("wc_token");
+  if (!token) {{
+    location.href = location.pathname + "?t=" + Date.now();
     return;
   }}
   btn.disabled = true;
@@ -287,7 +289,7 @@ function triggerRefresh() {{
   fetch(API_URL, {{
     method: "POST",
     headers: {{
-      "Authorization": "Bearer " + REFRESH_TOKEN,
+      "Authorization": "Bearer " + token,
       "Accept": "application/vnd.github.v3+json",
       "Content-Type": "application/json"
     }},
@@ -301,6 +303,10 @@ function triggerRefresh() {{
         btn.textContent = "Updating… " + secs + "s";
         if (secs <= 0) {{ clearInterval(iv); location.reload(); }}
       }}, 1000);
+    }} else if (r.status === 401 || r.status === 403) {{
+      localStorage.removeItem("wc_token");
+      btn.textContent = "Token invalid — cleared";
+      setTimeout(function() {{ btn.textContent = "↻ Refresh"; btn.disabled = false; }}, 3000);
     }} else {{
       btn.textContent = "Error " + r.status;
       setTimeout(function() {{ btn.textContent = "↻ Refresh"; btn.disabled = false; }}, 3000);

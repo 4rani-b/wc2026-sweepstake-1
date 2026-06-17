@@ -6,7 +6,6 @@ Writes docs/index.html with the current leaderboard.
 
 import json
 import datetime
-import os
 import pathlib
 import sys
 
@@ -72,8 +71,7 @@ def main():
     print("\nGenerating HTML...")
     from generate_html import generate
     now_utc = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
-    refresh_token = os.environ.get("REFRESH_TOKEN", "")
-    html = generate(scores, meta, participants, now_utc, refresh_token=refresh_token)
+    html = generate(scores, meta, participants, now_utc)
 
     DOCS.mkdir(exist_ok=True)
     out_path = DOCS / "index.html"
