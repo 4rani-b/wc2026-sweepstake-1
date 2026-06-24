@@ -27,16 +27,9 @@ def load_json(path: pathlib.Path):
 def main():
     print("Loading static data...")
     participants = load_json(DATA / "participants.json")
-    fifa_rankings = load_json(DATA / "fifa-rankings.json")
     aliases = load_json(DATA / "team-aliases.json")
     standings_overrides_path = DATA / "standings-overrides.json"
     standings_overrides = load_json(standings_overrides_path) if standings_overrides_path.exists() else {}
-
-    # All teams in the sweepstake (flat list for validation)
-    all_sweepstake_teams = {t for teams in participants.values() for t in teams}
-    missing = all_sweepstake_teams - set(fifa_rankings.keys())
-    if missing:
-        print(f"WARNING: teams missing from fifa-rankings.json: {missing}", file=sys.stderr)
 
     print("Fetching match data from ESPN API...")
     from fetch_data import fetch_all_matches
@@ -54,7 +47,7 @@ def main():
     print(f"  {total_groups} groups · {total_matches} completed matches")
 
     print("Calculating sweepstake scores...")
-    scores, meta = calculate_all(matches, group_standings, fifa_rankings, participants, aliases)
+    scores, meta = calculate_all(matches, group_standings, participants, aliases)
 
     # Print leaderboard to stdout for CI logs
     ranked = sorted(scores.items(), key=lambda x: -x[1]["total"])
@@ -62,10 +55,6 @@ def main():
     for rank, (person, data) in enumerate(ranked, 1):
         print(f"  {rank:2}. {person:<8} {data['total']:3} pts")
 
-    if meta["cinderella_team"]:
-        print(f"\nCinderella: {meta['cinderella_team']} (owner: {meta['cinderella_owner']})")
-    if meta["wooden_spoon_team"]:
-        print(f"Wooden Spoon: {meta['wooden_spoon_team']} (owner: {meta['wooden_spoon_owner']})")
     if meta["tournament_winner"]:
         print(f"Tournament winner: {meta['tournament_winner']} (owner: {meta['tournament_winner_owner']})")
 

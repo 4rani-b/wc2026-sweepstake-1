@@ -6,9 +6,6 @@ Scoring rules:
   Qualify for R32: +1  (auto for 1st/2nd; best-8 3rd-place teams also qualify)
   Knockout win:    +3  (R32, R16, QF, SF)
   Win the Final:   +5
-  Giant Killer:    +2 per win against a team ranked 15+ FIFA places higher (better)
-  Cinderella:      +5 to owner of lowest-FIFA-ranked team to reach knockouts
-  Wooden Spoon:    +5 to owner of worst group-stage team (last of the lasts)
 """
 
 GROUP_STAGE_PTS = {1: 3, 2: 2, 3: 1, 4: 0}
@@ -129,7 +126,6 @@ def find_third_place_qualifiers(group_standings: dict) -> set:
 def calculate_all(
     matches: list,
     group_standings: dict,
-    fifa_rankings: dict,
     participants: dict,
     aliases: dict,
 ) -> tuple:
@@ -137,8 +133,7 @@ def calculate_all(
     Returns (scores_dict, meta_dict).
 
     scores_dict: {person: {total, teams: {team: breakdown_dict}}}
-    meta_dict: {cinderella_team, cinderella_owner, wooden_spoon_team,
-                wooden_spoon_owner, tournament_winner, tournament_winner_owner}
+    meta_dict: {tournament_winner, tournament_winner_owner}
     """
     # Flat lookup: team_name -> stats dict
     team_stats: dict = {}
@@ -175,55 +170,6 @@ def calculate_all(
         elif pos == 3 and team in third_qualifiers:
             confirmed_r32.add(team)
 
-    # ---- Giant Killer: pre-compute for every team ----
-    # Applies to ALL matches (group + knockout), any win where winner is ranked 15+ places worse
-    giant_killer_pts: dict = {}
-    for match in matches:
-        if not match["completed"] or not match["winner"]:
-            continue
-        w = _normalize(match["winner"], aliases)
-        l = _normalize(match["loser"], aliases)
-        w_rank = fifa_rankings.get(w, 999)
-        l_rank = fifa_rankings.get(l, 999)
-        if w_rank - l_rank >= 15:
-            giant_killer_pts[w] = giant_killer_pts.get(w, 0) + 2
-
-    # ---- Cinderella: lowest FIFA-ranked team in confirmed R32 ----
-    cinderella_team = None
-    if confirmed_r32:
-        ranked = [t for t in confirmed_r32 if t in fifa_rankings]
-        if ranked:
-            cinderella_team = max(ranked, key=lambda t: fifa_rankings[t])
-
-    # ---- Wooden Spoon: team currently performing worst by sweepstake points ----
-    # Calculated AFTER base points are known (no circular dependency — ws excluded from base)
-    # Only teams that have played at least 1 match are eligible.
-    # Tiebreak: worst FIFA ranking (highest rank number).
-    all_sweepstake_teams = [t for teams in participants.values() for t in teams]
-    active_teams = [t for t in all_sweepstake_teams if team_stats.get(t, {}).get("mp", 0) > 0]
-
-    def _base_pts(team: str) -> int:
-        stats = team_stats.get(team)
-        pos = stats["position"] if stats else 4
-        gp = GROUP_STAGE_PTS[pos]
-        r32 = 1 if team in confirmed_r32 else 0
-        wins = knockout_wins.get(team, [])
-        ko = len([w for w in wins if w[1] != "final"]) * 3
-        fin = 5 if any(w[1] == "final" for w in wins) else 0
-        gk = giant_killer_pts.get(team, 0)
-        cin = 5 if team == cinderella_team else 0
-        return gp + r32 + ko + fin + gk + cin
-
-    wooden_spoon_team = None
-    if active_teams:
-        min_pts = min(_base_pts(t) for t in active_teams)
-        candidates = [t for t in active_teams if _base_pts(t) == min_pts]
-        # Tiebreak: worst GD (most negative), then most goals conceded
-        def _worst_key(team):
-            stats = team_stats.get(team, {})
-            return (stats.get("gd", 0), -stats.get("ga", 0))
-        wooden_spoon_team = min(candidates, key=_worst_key)
-
     # ---- Tournament winner ----
     tournament_winner = None
     for w_team, wins in knockout_wins.items():
@@ -250,25 +196,13 @@ def calculate_all(
         # Win the Final
         final_pts = 5 if any(w[1] == "final" for w in wins) else 0
 
-        # Giant Killer
-        gk_pts = giant_killer_pts.get(team, 0)
-
-        # Cinderella Award
-        cinderella_pts = 5 if team == cinderella_team else 0
-
-        # Wooden Spoon
-        ws_pts = 5 if team == wooden_spoon_team else 0
-
-        total = group_pts + r32_pts + ko_pts + final_pts + gk_pts + cinderella_pts + ws_pts
+        total = group_pts + r32_pts + ko_pts + final_pts
 
         return {
             "group": group_pts,
             "qualify_r32": r32_pts,
             "knockout_wins": ko_pts,
             "win_final": final_pts,
-            "giant_killer": gk_pts,
-            "cinderella": cinderella_pts,
-            "wooden_spoon": ws_pts,
             "total": total,
             "position": position,
             "complete": stats["complete"] if stats else False,
@@ -292,10 +226,6 @@ def calculate_all(
         return None
 
     meta = {
-        "cinderella_team": cinderella_team,
-        "cinderella_owner": _owner_of(cinderella_team),
-        "wooden_spoon_team": wooden_spoon_team,
-        "wooden_spoon_owner": _owner_of(wooden_spoon_team),
         "tournament_winner": tournament_winner,
         "tournament_winner_owner": _owner_of(tournament_winner),
     }
