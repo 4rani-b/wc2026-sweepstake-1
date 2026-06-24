@@ -150,25 +150,10 @@ def _team_cell(team: str, breakdown: dict) -> str:
     if breakdown["win_final"]:
         parts.append(f"Won Final: +5")
 
-    # Giant Killer always shown — 0 if none earned yet
-    gk = breakdown["giant_killer"]
-    parts.append(f"Giant Killer: +{gk}" if gk else "Giant Killer: 0")
-
-    bonus_parts = []
-    if breakdown["cinderella"]:
-        bonus_parts.append("Cinderella: +5")
-    if breakdown["wooden_spoon"]:
-        bonus_parts.append("🥄 Wooden Spoon: +5")
-
-    regular_html = "<br>".join(parts) if parts else ""
-    bonus_html = ""
-    if bonus_parts:
-        bonus_html = "<br>" + "<br>".join(f'<span class="bonus">{b}</span>' for b in bonus_parts)
-
     if not breakdown["mp"] and not breakdown["complete"]:
         breakdown_html = '<span class="no-data">No matches yet</span>'
     else:
-        breakdown_html = f'<span class="tbreakdown">{regular_html}{bonus_html}</span>'
+        breakdown_html = f'<span class="tbreakdown">{"<br>".join(parts)}</span>'
 
     return (
         f'<div class="team-cell">'
@@ -194,18 +179,6 @@ def generate(scores: dict, meta: dict, participants: dict, last_updated: str, wo
     ranked = sorted(scores.items(), key=lambda x: -x[1]["total"])
 
     # --- Award cards ---
-    cinderella_card = _award_card(
-        "⭐ Cinderella Award (+5pts)",
-        holder=meta["cinderella_owner"],
-        team=f"{TEAM_FLAGS.get(meta['cinderella_team'], '')} {meta['cinderella_team']}" if meta["cinderella_team"] else "",
-        description="Lowest FIFA-ranked team to reach Round of 32 — TBD",
-    )
-    wooden_card = _award_card(
-        "🪵 Wooden Spoon (+5pts)",
-        holder=meta["wooden_spoon_owner"],
-        team=f"{TEAM_FLAGS.get(meta['wooden_spoon_team'], '')} {meta['wooden_spoon_team']}" if meta["wooden_spoon_team"] else "",
-        description="Worst group-stage team — TBD (group stage not yet complete)",
-    )
     winner_card = _award_card(
         "🏆 World Cup Winner",
         holder=meta["tournament_winner_owner"],
@@ -213,7 +186,7 @@ def generate(scores: dict, meta: dict, participants: dict, last_updated: str, wo
         description="Champion — TBD",
     )
 
-    awards_html = f'<div class="awards">{cinderella_card}{wooden_card}{winner_card}</div>'
+    awards_html = f'<div class="awards">{winner_card}</div>'
 
     # --- Table header ---
     header_cells = (
@@ -265,8 +238,7 @@ def generate(scores: dict, meta: dict, participants: dict, last_updated: str, wo
 </table>
 <footer>
   <p><strong>Scoring:</strong> Win Group 3pts · 2nd 2pts · 3rd 1pt · Qualify R32 +1pt · Knockout Win 3pts · Win Final 5pts</p>
-  <p>Giant Killer +2pts (beat team 15+ FIFA places above you) · Cinderella Award +5pts · Wooden Spoon +5pts</p>
-  <p>R16 wins also count for 3pts · Points recalculated fresh each day (not cumulative)</p>
+  <p>Points recalculated fresh each day (not cumulative)</p>
 </footer>
 <script>
 var WORKER_URL = "{worker_url}";
