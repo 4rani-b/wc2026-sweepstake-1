@@ -81,6 +81,9 @@ td { padding: 10px 8px; vertical-align: top; }
 .team-cell .tbreakdown { color: var(--muted); margin-top: 2px; line-height: 1.5; display: block; }
 .team-cell .tbreakdown .bonus { color: var(--orange); }
 .no-data { color: var(--muted); font-style: italic; font-size: 0.8em; }
+.team-cell.eliminated { background: rgba(248, 81, 73, 0.08); border: 1px solid rgba(248, 81, 73, 0.25); }
+.team-cell.eliminated .tname { color: var(--muted); }
+.team-cell.eliminated .tpts { color: var(--muted); }
 
 footer {
     color: var(--muted); font-size: 0.78em; text-align: center;
@@ -155,8 +158,9 @@ def _team_cell(team: str, breakdown: dict) -> str:
     else:
         breakdown_html = f'<span class="tbreakdown">{"<br>".join(parts)}</span>'
 
+    eliminated_class = " eliminated" if breakdown.get("eliminated") else ""
     return (
-        f'<div class="team-cell">'
+        f'<div class="team-cell{eliminated_class}">'
         f'<span class="tname">{flag} {team}</span><br>'
         f'<span class="tpts">{total} pts</span><br>'
         f'{breakdown_html}'

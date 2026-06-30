@@ -170,6 +170,12 @@ def calculate_all(
         elif pos == 3 and team in third_qualifiers:
             confirmed_r32.add(team)
 
+    # Teams knocked out of the knockout stage (lost any knockout match)
+    knocked_out_teams: set = set()
+    for match in matches:
+        if match["stage"] in KNOCKOUT_STAGES and match["completed"] and match["loser"]:
+            knocked_out_teams.add(_normalize(match["loser"], aliases))
+
     # ---- Tournament winner ----
     tournament_winner = None
     for w_team, wins in knockout_wins.items():
@@ -198,6 +204,10 @@ def calculate_all(
 
         total = group_pts + r32_pts + ko_pts + final_pts
 
+        # Eliminated = group done and didn't qualify, or lost in knockout stage
+        group_done_no_qualify = bool(stats and stats["complete"] and team not in confirmed_r32)
+        eliminated = group_done_no_qualify or team in knocked_out_teams
+
         return {
             "group": group_pts,
             "qualify_r32": r32_pts,
@@ -207,6 +217,7 @@ def calculate_all(
             "position": position,
             "complete": stats["complete"] if stats else False,
             "mp": stats["mp"] if stats else 0,
+            "eliminated": eliminated,
         }
 
     # ---- Aggregate per participant ----
